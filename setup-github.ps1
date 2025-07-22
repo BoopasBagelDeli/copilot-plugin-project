@@ -38,7 +38,8 @@ Write-Host "🔧 Initializing Git repository..." -ForegroundColor Blue
 if (-not (Test-Path ".git")) {
     git init
     Write-Host "✅ Git repository initialized" -ForegroundColor Green
-} else {
+}
+else {
     Write-Host "✅ Git repository already exists" -ForegroundColor Green
 }
 
@@ -77,7 +78,8 @@ Ready for deployment with 'azd up'"
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "✅ Initial commit created successfully" -ForegroundColor Green
-} else {
+}
+else {
     Write-Error "Failed to create initial commit"
     exit 1
 }
@@ -98,7 +100,8 @@ if ($LASTEXITCODE -eq 0) {
     Write-Host ""
     Write-Host "🎉 SUCCESS! Your code has been pushed to GitHub!" -ForegroundColor Green
     Write-Host "Repository URL: $repoUrl" -ForegroundColor White
-} else {
+}
+else {
     Write-Host ""
     Write-Warning "Push failed. This might be because:"
     Write-Host "1. The repository doesn't exist on GitHub" -ForegroundColor White
