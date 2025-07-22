@@ -31,14 +31,15 @@ param tags object = {
   'azd-env-name': environmentName
 }
 
-// Generate unique resource names using resource token (shortened for storage account limits)
+// Generate unique resource names using resource token (shortened for naming limits)
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var shortToken = substring(resourceToken, 0, 8)
-var storageAccountName = 'st${shortToken}${substring(environmentName, 0, min(length(environmentName), 8))}'
+var envPrefix = substring(replace(environmentName, '-', ''), 0, min(length(replace(environmentName, '-', '')), 8))
+var storageAccountName = 'st${shortToken}${envPrefix}'
 var functionAppName = '${resourcePrefix}-func-${resourceToken}'
 var hostingPlanName = '${resourcePrefix}-plan-${resourceToken}'
 var applicationInsightsName = '${resourcePrefix}-ai-${resourceToken}'
-var keyVaultName = '${resourcePrefix}-kv-${resourceToken}'
+var keyVaultName = 'kv${shortToken}${envPrefix}'
 var logAnalyticsName = '${resourcePrefix}-logs-${resourceToken}'
 
 // Storage Account for Azure Functions
