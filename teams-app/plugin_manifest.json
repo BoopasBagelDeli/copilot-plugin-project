@@ -17,7 +17,7 @@
         "reference_id": "oauth2"
       },
       "spec": {
-        "url": "https://copilot-plugin-func-f46zzw7hhsh2q.azurewebsites.net/api/openapi"
+        "url": "https://your-function-app.azurewebsites.net/api/openapi"
       },
       "run_for_functions": [
         "searchData",

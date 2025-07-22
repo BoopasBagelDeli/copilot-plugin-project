@@ -1,0 +1,45 @@
+{
+  "manifestVersion": "1.17",
+  "version": "1.0.0",
+  "id": "ce52f3ea-a567-4540-9c12-3e7941b825bf",
+  "packageName": "com.company.copilot-plugin",
+  "developer": {
+    "name": "BoopasBagelDeli",
+    "websiteUrl": "https://github.com/BoopasBagelDeli",
+    "privacyUrl": "https://github.com/BoopasBagelDeli/copilot-plugin-project/blob/main/privacy.md",
+    "termsOfUseUrl": "https://github.com/BoopasBagelDeli/copilot-plugin-project/blob/main/terms.md"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "Company Data Plugin",
+    "full": "Company Data Plugin for Microsoft 365 Copilot"
+  },
+  "description": {
+    "short": "Search and analyze company data with AI assistance",
+    "full": "A declarative plugin that helps users search and analyze company data through Microsoft 365 Copilot. Provides intelligent search across documents, contacts, events, and tasks, plus content analysis for sentiment, keywords, and insights."
+  },
+  "accentColor": "#0078D4",
+  "composeExtensions": [],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": [
+    "copilot-plugin-func-f46zzw7hhsh2q.azurewebsites.net"
+  ],
+  "webApplicationInfo": {
+    "id": "ce52f3ea-a567-4540-9c12-3e7941b825bf",
+    "resource": "api://copilot-plugin-func-f46zzw7hhsh2q.azurewebsites.net/ce52f3ea-a567-4540-9c12-3e7941b825bf"
+  },
+  "copilotExtensions": {
+    "declarativeAgents": [
+      {
+        "id": "company-data-plugin",
+        "file": "plugin_manifest.json"
+      }
+    ]
+  }
+}

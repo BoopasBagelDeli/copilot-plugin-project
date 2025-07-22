@@ -1,8 +1,12 @@
-# Microsoft 365 Copilot Plugin Project
+# Microsoft 365 Copilot Plugin Template
 
 ## 🎯 Project Overview
 
-This project demonstrates the complete implementation of a declarative Microsoft 365 Copilot plugin following Azure best practices. It includes:
+This is a **production-ready template** for building Microsoft 365 Copilot plugins with Azure Functions. Use this as a starting point for your own plugin projects.
+
+### ✨ Template Features
+
+This template provides the complete implementation of a declarative Microsoft 365 Copilot plugin following Azure best practices. It includes:
 
 - **Declarative Plugin Architecture** with OpenAPI specification
 - **Azure Functions Backend** with Python runtime
@@ -44,6 +48,30 @@ copilot-plugin-project/
 └── 📄 .gitignore              # Git ignore patterns
 ```
 
+## 🚀 Using This Template
+
+### Option 1: Use GitHub Template (Recommended)
+1. Click **"Use this template"** button on GitHub
+2. Create your new repository from this template
+3. Clone your new repository locally
+4. Run the initialization script to customize for your use case
+
+### Option 2: Manual Setup
+```bash
+# Clone this template
+git clone https://github.com/BoopasBagelDeli/copilot-plugin-project.git my-new-plugin
+cd my-new-plugin
+
+# Initialize template for your project
+python initialize_template.py
+# OR for PowerShell users:
+# .\initialize_template.ps1
+
+# Deploy to Azure
+azd init
+azd up
+```
+
 ## 🚀 Quick Start
 
 ### 1. Prerequisites
@@ -57,7 +85,25 @@ copilot-plugin-project/
   - Python
   - YAML
 
-### 2. Setup & Deployment
+### 2. Template Customization
+
+After creating from template, customize these key files:
+
+**Core Plugin Configuration:**
+- `plugins/plugin_manifest.json` - Plugin identity and capabilities  
+- `plugins/openapi.yaml` - API specification and endpoints
+- `src/main.py` - Business logic and service implementations
+
+**Infrastructure:**
+- `infra/main.bicep` - Azure resources and configuration
+- `azure.yaml` - Deployment settings
+
+**Run the initialization script for guided setup:**
+```bash
+python initialize_template.py
+```
+
+### 3. Setup & Deployment
 
 ```bash
 # Clone and setup
