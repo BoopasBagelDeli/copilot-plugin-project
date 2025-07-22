@@ -255,3 +255,7 @@ temp/
 secrets.json
 appsettings.*.json
 !appsettings.Development.json.template
+
+# Azure AD App Registration Secrets
+app-registration.json
+required-permissions.json
