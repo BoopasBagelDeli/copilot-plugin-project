@@ -45,13 +45,13 @@ param tags object = {}
 
 // Variables for resource naming
 var abbrs = loadJsonContent('./abbreviations.json')
-var resourceToken = toLower(uniqueString(subscription().id, resourceGroup().id, location, environmentName))
+var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 
 // Resource names
-var keyVaultName = '${abbrs.keyVaultVaults}${take(replace(environmentName, '-', ''), 8)}${take(resourceToken, 8)}'
+var keyVaultName = '${abbrs.keyVaultVaults}${environmentName}-${resourceToken}'
 var logAnalyticsName = '${abbrs.operationalInsightsWorkspaces}${take(environmentName, 15)}-${take(resourceToken, 10)}'
-var applicationInsightsName = '${abbrs.insightsComponents}${take(environmentName, 10)}-${take(resourceToken, 12)}'
-var appServicePlanName = '${abbrs.webServerFarms}${take(environmentName, 10)}-${take(resourceToken, 12)}'
+var applicationInsightsName = '${abbrs.insightsComponents}${environmentName}-${resourceToken}'
+var appServicePlanName = '${abbrs.webServerFarms}${environmentName}-${resourceToken}'
 var storageAccountName = '${abbrs.storageStorageAccounts}${take(replace(environmentName, '-', ''), 8)}${take(resourceToken, 14)}'
 var managedIdentityName = '${abbrs.managedIdentityUserAssignedIdentities}${environmentName}-${resourceToken}'
 
@@ -137,6 +137,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
     enableRbacAuthorization: true
     enableSoftDelete: true
     softDeleteRetentionInDays: 7
+    enablePurgeProtection: false
     publicNetworkAccess: 'Enabled'
     networkAcls: {
       defaultAction: 'Allow'
@@ -154,72 +155,6 @@ resource keyVaultSecretsUserRole 'Microsoft.Authorization/roleAssignments@2022-0
       'Microsoft.Authorization/roleDefinitions',
       '4633458b-17de-408a-b874-0445c86b69e6'
     ) // Key Vault Secrets User
-    principalId: managedIdentity.properties.principalId
-    principalType: 'ServicePrincipal'
-  }
-}
-
-// Storage Account RBAC roles for Function Apps
-resource storageBlobDataOwnerRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(storageAccount.id, managedIdentity.id, 'Storage Blob Data Owner')
-  scope: storageAccount
-  properties: {
-    roleDefinitionId: subscriptionResourceId(
-      'Microsoft.Authorization/roleDefinitions',
-      'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'
-    ) // Storage Blob Data Owner
-    principalId: managedIdentity.properties.principalId
-    principalType: 'ServicePrincipal'
-  }
-}
-
-resource storageBlobDataContributorRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(storageAccount.id, managedIdentity.id, 'Storage Blob Data Contributor')
-  scope: storageAccount
-  properties: {
-    roleDefinitionId: subscriptionResourceId(
-      'Microsoft.Authorization/roleDefinitions',
-      'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
-    ) // Storage Blob Data Contributor
-    principalId: managedIdentity.properties.principalId
-    principalType: 'ServicePrincipal'
-  }
-}
-
-resource storageQueueDataContributorRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(storageAccount.id, managedIdentity.id, 'Storage Queue Data Contributor')
-  scope: storageAccount
-  properties: {
-    roleDefinitionId: subscriptionResourceId(
-      'Microsoft.Authorization/roleDefinitions',
-      '974c5e8b-45b9-4653-ba55-5f855dd0fb88'
-    ) // Storage Queue Data Contributor
-    principalId: managedIdentity.properties.principalId
-    principalType: 'ServicePrincipal'
-  }
-}
-
-resource storageTableDataContributorRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(storageAccount.id, managedIdentity.id, 'Storage Table Data Contributor')
-  scope: storageAccount
-  properties: {
-    roleDefinitionId: subscriptionResourceId(
-      'Microsoft.Authorization/roleDefinitions',
-      '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3'
-    ) // Storage Table Data Contributor
-    principalId: managedIdentity.properties.principalId
-    principalType: 'ServicePrincipal'
-  }
-}
-
-resource monitoringMetricsPublisherRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(subscription().id, managedIdentity.id, 'Monitoring Metrics Publisher')
-  scope: resourceGroup()
-  properties: {
-    roleDefinitionId: subscriptionResourceId(
-      'Microsoft.Authorization/roleDefinitions',
-      '3913510d-42f4-4e42-8a64-420c390055eb'
-    ) // Monitoring Metrics Publisher
     principalId: managedIdentity.properties.principalId
     principalType: 'ServicePrincipal'
   }
@@ -275,7 +210,7 @@ var commonAppSettings = [
 resource entraIdFunctionApp 'Microsoft.Web/sites@2022-09-01' = {
   name: functionAppNames.entraId
   location: location
-  tags: union(tags, { 'azd-env-name': environmentName, 'azd-service-name': 'entraidconnector' })
+  tags: union(tags, { 'azd-env-name': environmentName })
   kind: 'functionapp'
   identity: {
     type: 'UserAssigned'
@@ -317,7 +252,7 @@ resource entraIdFunctionApp 'Microsoft.Web/sites@2022-09-01' = {
 resource azureMonitorFunctionApp 'Microsoft.Web/sites@2022-09-01' = {
   name: functionAppNames.azureMonitor
   location: location
-  tags: union(tags, { 'azd-env-name': environmentName, 'azd-service-name': 'azuremonitorconnector' })
+  tags: union(tags, { 'azd-env-name': environmentName })
   kind: 'functionapp'
   identity: {
     type: 'UserAssigned'
@@ -359,7 +294,7 @@ resource azureMonitorFunctionApp 'Microsoft.Web/sites@2022-09-01' = {
 resource azureDevOpsFunctionApp 'Microsoft.Web/sites@2022-09-01' = {
   name: functionAppNames.azureDevOps
   location: location
-  tags: union(tags, { 'azd-env-name': environmentName, 'azd-service-name': 'azuredevopsconnector' })
+  tags: union(tags, { 'azd-env-name': environmentName })
   kind: 'functionapp'
   identity: {
     type: 'UserAssigned'
@@ -401,7 +336,7 @@ resource azureDevOpsFunctionApp 'Microsoft.Web/sites@2022-09-01' = {
 resource githubFunctionApp 'Microsoft.Web/sites@2022-09-01' = {
   name: functionAppNames.github
   location: location
-  tags: union(tags, { 'azd-env-name': environmentName, 'azd-service-name': 'githubconnector' })
+  tags: union(tags, { 'azd-env-name': environmentName })
   kind: 'functionapp'
   identity: {
     type: 'UserAssigned'
@@ -443,7 +378,7 @@ resource githubFunctionApp 'Microsoft.Web/sites@2022-09-01' = {
 resource githubActionsFunctionApp 'Microsoft.Web/sites@2022-09-01' = {
   name: functionAppNames.githubActions
   location: location
-  tags: union(tags, { 'azd-env-name': environmentName, 'azd-service-name': 'githubactionsconnector' })
+  tags: union(tags, { 'azd-env-name': environmentName })
   kind: 'functionapp'
   identity: {
     type: 'UserAssigned'
@@ -485,7 +420,7 @@ resource githubActionsFunctionApp 'Microsoft.Web/sites@2022-09-01' = {
 resource azureReposFunctionApp 'Microsoft.Web/sites@2022-09-01' = {
   name: functionAppNames.azureRepos
   location: location
-  tags: union(tags, { 'azd-env-name': environmentName, 'azd-service-name': 'azurereposconnector' })
+  tags: union(tags, { 'azd-env-name': environmentName })
   kind: 'functionapp'
   identity: {
     type: 'UserAssigned'
@@ -523,132 +458,10 @@ resource azureReposFunctionApp 'Microsoft.Web/sites@2022-09-01' = {
   }
 }
 
-// Diagnostic Settings for Function Apps
-resource entraIdFunctionAppDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-  name: 'logs'
-  scope: entraIdFunctionApp
-  properties: {
-    workspaceId: logAnalytics.id
-    logs: [
-      {
-        category: 'FunctionAppLogs'
-        enabled: true
-      }
-    ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-      }
-    ]
-  }
-}
-
-resource azureMonitorFunctionAppDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-  name: 'logs'
-  scope: azureMonitorFunctionApp
-  properties: {
-    workspaceId: logAnalytics.id
-    logs: [
-      {
-        category: 'FunctionAppLogs'
-        enabled: true
-      }
-    ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-      }
-    ]
-  }
-}
-
-resource azureDevOpsFunctionAppDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-  name: 'logs'
-  scope: azureDevOpsFunctionApp
-  properties: {
-    workspaceId: logAnalytics.id
-    logs: [
-      {
-        category: 'FunctionAppLogs'
-        enabled: true
-      }
-    ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-      }
-    ]
-  }
-}
-
-resource githubFunctionAppDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-  name: 'logs'
-  scope: githubFunctionApp
-  properties: {
-    workspaceId: logAnalytics.id
-    logs: [
-      {
-        category: 'FunctionAppLogs'
-        enabled: true
-      }
-    ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-      }
-    ]
-  }
-}
-
-resource githubActionsFunctionAppDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-  name: 'logs'
-  scope: githubActionsFunctionApp
-  properties: {
-    workspaceId: logAnalytics.id
-    logs: [
-      {
-        category: 'FunctionAppLogs'
-        enabled: true
-      }
-    ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-      }
-    ]
-  }
-}
-
-resource azureReposFunctionAppDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-  name: 'logs'
-  scope: azureReposFunctionApp
-  properties: {
-    workspaceId: logAnalytics.id
-    logs: [
-      {
-        category: 'FunctionAppLogs'
-        enabled: true
-      }
-    ]
-    metrics: [
-      {
-        category: 'AllMetrics'
-        enabled: true
-      }
-    ]
-  }
-}
-
 // Outputs
 output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = subscription().tenantId
 output AZURE_RESOURCE_GROUP string = resourceGroup().name
-output RESOURCE_GROUP_ID string = resourceGroup().id
 
 output AZURE_KEY_VAULT_NAME string = keyVault.name
 output AZURE_KEY_VAULT_URL string = keyVault.properties.vaultUri

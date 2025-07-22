@@ -19,40 +19,40 @@ param(
 )
 
 $Services = @{
-    "EntraID" = @{
-        Name = "EntraID Connector"
-        Url = "https://func-entraid-copilot-app-zmkh7vbjhb6ca.azurewebsites.net"
-        Icon = "🔐"
+    "EntraID"       = @{
+        Name     = "EntraID Connector"
+        Url      = "https://func-entraid-copilot-app-zmkh7vbjhb6ca.azurewebsites.net"
+        Icon     = "🔐"
         Category = "Identity & Access Management"
     }
-    "AzureMonitor" = @{
-        Name = "Azure Monitor Connector"
-        Url = "https://func-azuremon-copilot-app-zmkh7vbjhb6ca.azurewebsites.net"
-        Icon = "📊"
+    "AzureMonitor"  = @{
+        Name     = "Azure Monitor Connector"
+        Url      = "https://func-azuremon-copilot-app-zmkh7vbjhb6ca.azurewebsites.net"
+        Icon     = "📊"
         Category = "Monitoring & Analytics"
     }
-    "AzureDevOps" = @{
-        Name = "Azure DevOps Connector"
-        Url = "https://func-azuredevops-copilot-app-zmkh7vbjhb6ca.azurewebsites.net"
-        Icon = "🔧"
+    "AzureDevOps"   = @{
+        Name     = "Azure DevOps Connector"
+        Url      = "https://func-azuredevops-copilot-app-zmkh7vbjhb6ca.azurewebsites.net"
+        Icon     = "🔧"
         Category = "DevOps & CI/CD"
     }
-    "GitHub" = @{
-        Name = "GitHub Connector"
-        Url = "https://func-github-copilot-app-zmkh7vbjhb6ca.azurewebsites.net"
-        Icon = "📋"
+    "GitHub"        = @{
+        Name     = "GitHub Connector"
+        Url      = "https://func-github-copilot-app-zmkh7vbjhb6ca.azurewebsites.net"
+        Icon     = "📋"
         Category = "Source Control"
     }
     "GitHubActions" = @{
-        Name = "GitHub Actions Connector"
-        Url = "https://func-ghactions-copilot-app-zmkh7vbjhb6ca.azurewebsites.net"
-        Icon = "⚡"
+        Name     = "GitHub Actions Connector"
+        Url      = "https://func-ghactions-copilot-app-zmkh7vbjhb6ca.azurewebsites.net"
+        Icon     = "⚡"
         Category = "Automation & Workflows"
     }
-    "AzureRepos" = @{
-        Name = "Azure Repos Connector"
-        Url = "https://func-azurerepos-copilot-app-zmkh7vbjhb6ca.azurewebsites.net"
-        Icon = "📚"
+    "AzureRepos"    = @{
+        Name     = "Azure Repos Connector"
+        Url      = "https://func-azurerepos-copilot-app-zmkh7vbjhb6ca.azurewebsites.net"
+        Icon     = "📚"
         Category = "Azure Source Control"
     }
 }
@@ -82,24 +82,24 @@ function Test-ServiceWarmup {
             try {
                 $response = Invoke-RestMethod -Uri $url -Method GET -TimeoutSec 60
                 return @{
-                    Service = $serviceName
-                    Status = "Warmed"
+                    Service  = $serviceName
+                    Status   = "Warmed"
                     Response = $response
-                    Success = $true
+                    Success  = $true
                 }
             }
             catch {
                 return @{
                     Service = $serviceName
-                    Status = "Failed"
-                    Error = $_.Exception.Message
+                    Status  = "Failed"
+                    Error   = $_.Exception.Message
                     Success = $false
                 }
             }
         } -ArgumentList $service.Url, $service.Name
         
         $jobs += @{
-            Job = $job
+            Job        = $job
             ServiceKey = $serviceKey
         }
     }

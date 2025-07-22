@@ -3,6 +3,7 @@
 ## ✅ Completed Tasks
 
 ### 1. Microsoft Ecosystem Plugin Generation
+
 Successfully generated **7 comprehensive plugin modules** for Microsoft 365 Copilot integration:
 
 - **🔐 EntraIDConnector-module**: Identity and access management
@@ -13,6 +14,7 @@ Successfully generated **7 comprehensive plugin modules** for Microsoft 365 Copi
 - **📂 AzureReposConnector-module**: Azure Git repository management
 
 ### 2. Enhanced Plugin Generator Framework
+
 - Extended framework with **6 new plugin types**: Identity, Monitoring, DevOps, SourceControl, AIAssistant, Automation
 - Fixed PowerShell syntax issues and improved generation reliability
 - Comprehensive business logic templates with Python Azure Functions
@@ -20,6 +22,7 @@ Successfully generated **7 comprehensive plugin modules** for Microsoft 365 Copi
 - PowerShell deployment scripts for each module
 
 ### 3. Infrastructure-as-Code Implementation
+
 - **✅ Bicep templates** following Azure best practices
 - **✅ Azure Developer CLI (azd)** configuration for multi-service deployment
 - **✅ Resource naming** with proper length constraints and conventions
@@ -27,9 +30,11 @@ Successfully generated **7 comprehensive plugin modules** for Microsoft 365 Copi
 - **✅ Monitoring setup** with Application Insights and Log Analytics
 
 ### 4. Azure Resources Being Deployed
+
 Current deployment includes:
 
 #### Core Infrastructure
+
 - **Resource Group**: `rg-copilot-app`
 - **Storage Account**: For Function Apps runtime
 - **Key Vault**: Secure credential management with RBAC
@@ -38,6 +43,7 @@ Current deployment includes:
 - **App Service Plan**: Consumption-based hosting
 
 #### Function Apps (6 services)
+
 - **entraidconnector**: Entra ID integration functions
 - **azuremonitorconnector**: Azure Monitor integration
 - **azuredevopsconnector**: Azure DevOps automation  
@@ -46,6 +52,7 @@ Current deployment includes:
 - **azurereposconnector**: Azure Repos management
 
 #### Security & Monitoring
+
 - **Managed Identity**: User-assigned identity with proper role assignments
 - **RBAC Permissions**: Key Vault, Storage, and Monitoring access
 - **Diagnostic Settings**: Function App logging to Log Analytics
@@ -54,15 +61,18 @@ Current deployment includes:
 ## 🚀 Current Status
 
 ### Deployment in Progress
+
 Azure deployment is currently running using `azd up` with the following configuration:
 
 - **Environment**: `copilot-app`
-- **Location**: `East US 2` 
+- **Location**: `East US 2`
 - **Subscription**: `Azure subscription 1`
 - **Resource Group**: `rg-copilot-app`
 
 ### Infrastructure Validation
+
 ✅ **Pre-deployment checks passed**:
+
 - Bicep templates validated without errors
 - Azure.yaml configured for multi-service deployment
 - Resource naming constraints satisfied
@@ -72,6 +82,7 @@ Azure deployment is currently running using `azd up` with the following configur
 ## 📋 Next Steps
 
 ### 1. Monitor Deployment Progress
+
 ```powershell
 # Check deployment status
 azd env get-values
@@ -81,14 +92,18 @@ azd logs
 ```
 
 ### 2. Post-Deployment Validation
+
 Once deployment completes:
+
 - Verify all Function Apps are running
 - Test API endpoints
 - Validate Key Vault access
 - Check Application Insights telemetry
 
 ### 3. Configure Service Credentials
+
 Add required secrets to Key Vault:
+
 ```bash
 # Entra ID credentials
 az keyvault secret set --vault-name <vault-name> --name "AZURE-CLIENT-ID" --value "<client-id>"
@@ -102,12 +117,14 @@ az keyvault secret set --vault-name <vault-name> --name "AZUREDEVOPS-PAT" --valu
 ```
 
 ### 4. Test Plugin Functionality
+
 - Test each Function App endpoint
 - Verify Microsoft Graph API integration
 - Validate GitHub API connections
 - Test Azure DevOps automation
 
 ### 5. Microsoft 365 Copilot Integration
+
 - Register plugins with Microsoft 365 Copilot
 - Configure plugin manifests
 - Test end-to-end functionality
@@ -115,24 +132,28 @@ az keyvault secret set --vault-name <vault-name> --name "AZUREDEVOPS-PAT" --valu
 ## 🛠️ Architecture Benefits
 
 ### Infrastructure-as-Code
+
 - **Repeatable deployments** using Bicep templates
-- **Version-controlled infrastructure** 
+- **Version-controlled infrastructure**
 - **Best practices compliance** for security and monitoring
 
 ### Scalable Design
+
 - **Consumption-based Function Apps** for cost efficiency
 - **Independent service deployment** for better maintainability
 - **Centralized monitoring** and logging
 
 ### Security First
+
 - **Managed Identity authentication** (no stored credentials)
 - **Key Vault integration** for secure secret management
-- **RBAC-based access control** 
+- **RBAC-based access control**
 - **HTTPS-only communication**
 
 ## 📊 Deployment Details
 
 ### Resource Naming Convention
+
 ```
 Key Vault: kv-{env}-{token}        (max 24 chars)
 Functions: func-{service}-{env}-{token}
@@ -141,6 +162,7 @@ Insights:  appi-{env}-{token}
 ```
 
 ### Function App Configuration
+
 - **Runtime**: Python 3.11
 - **Hosting**: Azure Functions Consumption Plan
 - **Authentication**: User-assigned Managed Identity
