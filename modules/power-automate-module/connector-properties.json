@@ -1,0 +1,27 @@
+{
+  "properties": {
+    "policyTemplateInstances": [],
+    "connectionParameters": {
+      "token": {
+        "type": "oauthSetting",
+        "oAuthSettings": {
+          "identityProvider": "aad",
+          "redirectMode": "Global",
+          "clientId": "5bc6594b-acd4-4e3b-93af-9dabab51c541",
+          "redirectUrl": "https://global.consent.azure-apim.net/redirect",
+          "properties": {
+            "IsFirstParty": "False",
+            "AzureActiveDirectoryResourceId": "https://graph.microsoft.com/"
+          },
+          "scopes": [
+            "https://graph.microsoft.com/.default"
+          ]
+        }
+      }
+    },
+    "iconBrandColor": "#0078d4",
+    "capabilities": [
+      "actions"
+    ]
+  }
+}

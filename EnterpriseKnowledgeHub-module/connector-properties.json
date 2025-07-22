@@ -1,0 +1,36 @@
+{
+  "properties": {
+    "connectionParameters": {
+      "token": {
+        "type": "oauthSetting",
+        "oAuthSettings": {
+          "customParameters": {
+            "tenantId": {
+              "value": "de96b383-5f31-4895-9b41-88f3b7435919"
+            }
+          },
+          "identityProvider": "aad",
+          "redirectMode": "Global",
+          "clientId": "ce52f3ea-a567-4540-9c12-3e7941b825bf",
+          "redirectUrl": "https://global.consent.azure-apim.net/redirect",
+          "properties": {
+            "IsFirstParty": "False",
+            "AzureActiveDirectoryResourceId": "https://graph.microsoft.com/"
+          },
+          "scopes": [
+            "https://graph.microsoft.com/.default",
+            "https://graph.microsoft.com/Files.Read.All"
+          ]
+        }
+      }
+    },
+    "iconBrandColor": "#0078d4",
+    "capabilities": [
+      "actions"
+    ],
+    "environment": {
+      "name": "Boopas (default)",
+      "id": "de96b383-5f31-4895-9b41-88f3b7435919"
+    }
+  }
+}

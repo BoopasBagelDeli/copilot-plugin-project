@@ -1,0 +1,591 @@
+{
+  "schemes": [
+    "https"
+  ],
+  "info": {
+    "title": "SyntexSynapseConnector API",
+    "version": "1.0.0",
+    "description": "Microsoft Syntex + Azure Synapse document AI processing for M365 Copilot",
+    "contact": {
+      "name": "SyntexSynapseConnector Support",
+      "email": "support@boopasbageldeli.onmicrosoft.com"
+    }
+  },
+  "security": [
+    {
+      "oauth2_auth": [
+        "https://graph.microsoft.com/.default"
+      ]
+    }
+  ],
+  "host": "copilot-plugin-func-f46zzw7hhsh2q.azurewebsites.net",
+  "paths": {
+    "/analyzeform": {
+      "post": {
+        "parameters": [
+          {
+            "required": true,
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": [
+                "query"
+              ],
+              "properties": {
+                "limit": {
+                  "type": "integer",
+                  "default": 10,
+                  "description": "Maximum number of results"
+                },
+                "query": {
+                  "type": "string",
+                  "description": "Search query or operation parameter"
+                }
+              }
+            },
+            "name": "request"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "oauth2_auth": [
+              "https://graph.microsoft.com/.default"
+            ]
+          }
+        ],
+        "responses": {
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Bad request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Internal server error"
+          },
+          "401": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Unauthorized"
+          },
+          "200": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": "System.Collections.Hashtable",
+                      "description": "System.Collections.Hashtable",
+                      "id": "System.Collections.Hashtable",
+                      "url": "System.Collections.Hashtable"
+                    }
+                  }
+                },
+                "total": {
+                  "type": "integer",
+                  "description": "Total number of results"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "description": "Performs AnalyzeForm operation for SyntexSynapseConnector",
+        "summary": "Execute AnalyzeForm operation",
+        "operationId": "AnalyzeForm",
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/runsynapseanalysis": {
+      "post": {
+        "parameters": [
+          {
+            "required": true,
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": [
+                "query"
+              ],
+              "properties": {
+                "limit": {
+                  "type": "integer",
+                  "default": 10,
+                  "description": "Maximum number of results"
+                },
+                "query": {
+                  "type": "string",
+                  "description": "Search query or operation parameter"
+                }
+              }
+            },
+            "name": "request"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "oauth2_auth": [
+              "https://graph.microsoft.com/.default"
+            ]
+          }
+        ],
+        "responses": {
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Bad request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Internal server error"
+          },
+          "401": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Unauthorized"
+          },
+          "200": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": "System.Collections.Hashtable",
+                      "description": "System.Collections.Hashtable",
+                      "id": "System.Collections.Hashtable",
+                      "url": "System.Collections.Hashtable"
+                    }
+                  }
+                },
+                "total": {
+                  "type": "integer",
+                  "description": "Total number of results"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "description": "Performs RunSynapseAnalysis operation for SyntexSynapseConnector",
+        "summary": "Execute RunSynapseAnalysis operation",
+        "operationId": "RunSynapseAnalysis",
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/getprebuiltmodels": {
+      "post": {
+        "parameters": [
+          {
+            "required": true,
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": [
+                "query"
+              ],
+              "properties": {
+                "limit": {
+                  "type": "integer",
+                  "default": 10,
+                  "description": "Maximum number of results"
+                },
+                "query": {
+                  "type": "string",
+                  "description": "Search query or operation parameter"
+                }
+              }
+            },
+            "name": "request"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "oauth2_auth": [
+              "https://graph.microsoft.com/.default"
+            ]
+          }
+        ],
+        "responses": {
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Bad request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Internal server error"
+          },
+          "401": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Unauthorized"
+          },
+          "200": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": "System.Collections.Hashtable",
+                      "description": "System.Collections.Hashtable",
+                      "id": "System.Collections.Hashtable",
+                      "url": "System.Collections.Hashtable"
+                    }
+                  }
+                },
+                "total": {
+                  "type": "integer",
+                  "description": "Total number of results"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "description": "Performs GetPreBuiltModels operation for SyntexSynapseConnector",
+        "summary": "Execute GetPreBuiltModels operation",
+        "operationId": "GetPreBuiltModels",
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/classifycontent": {
+      "post": {
+        "parameters": [
+          {
+            "required": true,
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": [
+                "query"
+              ],
+              "properties": {
+                "limit": {
+                  "type": "integer",
+                  "default": 10,
+                  "description": "Maximum number of results"
+                },
+                "query": {
+                  "type": "string",
+                  "description": "Search query or operation parameter"
+                }
+              }
+            },
+            "name": "request"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "oauth2_auth": [
+              "https://graph.microsoft.com/.default"
+            ]
+          }
+        ],
+        "responses": {
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Bad request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Internal server error"
+          },
+          "401": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Unauthorized"
+          },
+          "200": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": "System.Collections.Hashtable",
+                      "description": "System.Collections.Hashtable",
+                      "id": "System.Collections.Hashtable",
+                      "url": "System.Collections.Hashtable"
+                    }
+                  }
+                },
+                "total": {
+                  "type": "integer",
+                  "description": "Total number of results"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "description": "Performs ClassifyContent operation for SyntexSynapseConnector",
+        "summary": "Execute ClassifyContent operation",
+        "operationId": "ClassifyContent",
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/extractdocumentdata": {
+      "post": {
+        "parameters": [
+          {
+            "required": true,
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": [
+                "query"
+              ],
+              "properties": {
+                "limit": {
+                  "type": "integer",
+                  "default": 10,
+                  "description": "Maximum number of results"
+                },
+                "query": {
+                  "type": "string",
+                  "description": "Search query or operation parameter"
+                }
+              }
+            },
+            "name": "request"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "oauth2_auth": [
+              "https://graph.microsoft.com/.default"
+            ]
+          }
+        ],
+        "responses": {
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Bad request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Internal server error"
+          },
+          "401": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Unauthorized"
+          },
+          "200": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": "System.Collections.Hashtable",
+                      "description": "System.Collections.Hashtable",
+                      "id": "System.Collections.Hashtable",
+                      "url": "System.Collections.Hashtable"
+                    }
+                  }
+                },
+                "total": {
+                  "type": "integer",
+                  "description": "Total number of results"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "description": "Performs ExtractDocumentData operation for SyntexSynapseConnector",
+        "summary": "Execute ExtractDocumentData operation",
+        "operationId": "ExtractDocumentData",
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/processdocument": {
+      "post": {
+        "parameters": [
+          {
+            "required": true,
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": [
+                "query"
+              ],
+              "properties": {
+                "limit": {
+                  "type": "integer",
+                  "default": 10,
+                  "description": "Maximum number of results"
+                },
+                "query": {
+                  "type": "string",
+                  "description": "Search query or operation parameter"
+                }
+              }
+            },
+            "name": "request"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "oauth2_auth": [
+              "https://graph.microsoft.com/.default"
+            ]
+          }
+        ],
+        "responses": {
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Bad request"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Internal server error"
+          },
+          "401": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Unauthorized"
+          },
+          "200": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": "System.Collections.Hashtable",
+                      "description": "System.Collections.Hashtable",
+                      "id": "System.Collections.Hashtable",
+                      "url": "System.Collections.Hashtable"
+                    }
+                  }
+                },
+                "total": {
+                  "type": "integer",
+                  "description": "Total number of results"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "description": "Performs ProcessDocument operation for SyntexSynapseConnector",
+        "summary": "Execute ProcessDocument operation",
+        "operationId": "ProcessDocument",
+        "produces": [
+          "application/json"
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "oauth2_auth": {
+      "tokenUrl": "https://login.microsoftonline.com/de96b383-5f31-4895-9b41-88f3b7435919/oauth2/v2.0/token",
+      "type": "oauth2",
+      "scopes": {
+        "https://graph.microsoft.com/.default": "Access SyntexSynapseConnector data through Microsoft Graph"
+      },
+      "authorizationUrl": "https://login.microsoftonline.com/de96b383-5f31-4895-9b41-88f3b7435919/oauth2/v2.0/authorize",
+      "flow": "accessCode",
+      "x-ms-client-id": "@Microsoft.KeyVault(SecretUri=https://kvf46zzw7hdeclarat.vault.azure.net/secrets/azure-client-id/)",
+      "x-ms-client-secret": "@Microsoft.KeyVault(SecretUri=https://kvf46zzw7hdeclarat.vault.azure.net/secrets/azure-client-secret/)"
+    }
+  },
+  "basePath": "/api/syntexsynapseconnector",
+  "swagger": "2.0",
+  "produces": [
+    "application/json"
+  ],
+  "definitions": {
+    "ErrorResponse": {
+      "type": "object",
+      "required": [
+        "error"
+      ],
+      "properties": {
+        "error": {
+          "type": "string",
+          "description": "Error message"
+        },
+        "details": {
+          "type": "string",
+          "description": "Detailed error information"
+        }
+      }
+    }
+  },
+  "consumes": [
+    "application/json"
+  ]
+}

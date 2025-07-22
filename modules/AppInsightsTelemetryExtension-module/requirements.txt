@@ -1,0 +1,30 @@
+# AppInsightsTelemetryExtension Module Dependencies
+# Azure Functions and SDK requirements
+
+# Core Azure Functions runtime
+azure-functions>=1.12.0
+azure-functions-worker>=1.2.0
+
+# Azure SDK for authentication and Key Vault
+azure-identity>=1.15.0
+azure-keyvault-secrets>=4.7.0
+
+# Application Insights telemetry
+azure-applicationinsights>=0.11.10
+azure-monitor-opentelemetry>=1.2.0
+
+# Additional telemetry and monitoring
+opencensus-azure>=1.0.8
+opencensus-ext-azure>=1.0.8
+
+# Core Python dependencies  
+requests>=2.31.0
+python-dateutil>=2.8.2
+typing-extensions>=4.5.0
+
+# Development and testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.5.0

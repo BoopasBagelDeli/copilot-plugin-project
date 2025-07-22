@@ -259,3 +259,5 @@ appsettings.*.json
 # Azure AD App Registration Secrets
 app-registration.json
 required-permissions.json
+
+.python_packages

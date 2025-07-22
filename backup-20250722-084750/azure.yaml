@@ -1,0 +1,58 @@
+# Azure Developer CLI configuration for Copilot Plugin
+name: copilot-plugin-project
+metadata:
+  template: copilot-plugin@1.0.0
+  
+services:
+  api:
+    project: ./
+    language: python
+    host: function
+    
+hooks:
+  predeploy:
+    windows:
+      shell: pwsh
+      run: |
+        Write-Host "Installing Python dependencies..."
+        pip install -r requirements.txt
+        Write-Host "Validating OpenAPI specification..."
+        python -c "import yaml; yaml.safe_load(open('plugins/openapi.yaml', 'r'))"
+        Write-Host "Validating plugin manifest..."
+        python -c "import json; json.load(open('plugins/plugin_manifest.json', 'r'))"
+    posix:
+      shell: sh
+      run: |
+        echo "Installing Python dependencies..."
+        pip install -r requirements.txt
+        echo "Validating OpenAPI specification..."
+        python -c "import yaml; yaml.safe_load(open('plugins/openapi.yaml', 'r'))"
+        echo "Validating plugin manifest..."
+        python -c "import json; json.load(open('plugins/plugin_manifest.json', 'r'))"
+  
+  postdeploy:
+    windows:
+      shell: pwsh
+      run: |
+        Write-Host "Deployment completed successfully!"
+        Write-Host "Function App URL: $env:AZURE_FUNCTION_APP_URL"
+        Write-Host "Testing health endpoint..."
+        $healthUrl = "$env:AZURE_FUNCTION_APP_URL/api/health"
+        try {
+          $response = Invoke-RestMethod -Uri $healthUrl -Method GET
+          Write-Host "Health check passed: $($response.status)"
+        } catch {
+          Write-Warning "Health check failed: $_"
+        }
+    posix:
+      shell: sh
+      run: |
+        echo "Deployment completed successfully!"
+        echo "Function App URL: $AZURE_FUNCTION_APP_URL"
+        echo "Testing health endpoint..."
+        health_url="$AZURE_FUNCTION_APP_URL/api/health"
+        if curl -f "$health_url"; then
+          echo "Health check passed"
+        else
+          echo "Health check failed"
+        fi

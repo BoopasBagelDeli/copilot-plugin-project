@@ -1,0 +1,34 @@
+{
+  "description": "Enterprise-grade framework for developing M365 Copilot plugins",
+  "name": "Microsoft 365 Copilot Plugin Framework",
+  "directories": {
+    "artifacts": "Build and release artifacts",
+    "tests": "Comprehensive test suite",
+    "modules": "Generated plugin modules",
+    "tools": "Development tools",
+    "framework": "Core framework and templates",
+    "docs": "Comprehensive documentation",
+    "config": "Configuration management",
+    "samples": "Examples and samples",
+    "deployment": "Deployment and operations"
+  },
+  "structure_version": "1.0.0",
+  "conventions": {
+    "files": {
+      "powershell": "kebab-case.ps1",
+      "config": "camelCase.json",
+      "python": "snake_case.py",
+      "documentation": "kebab-case.md or UPPERCASE.md"
+    },
+    "branches": {
+      "documentation": "docs/description",
+      "features": "feature/description",
+      "refactoring": "refactor/description",
+      "fixes": "fix/description"
+    },
+    "directories": "kebab-case"
+  },
+  "version": "2.0.0",
+  "created": "2025-07-22T08:47:50Z",
+  "organization": "Professional"
+}

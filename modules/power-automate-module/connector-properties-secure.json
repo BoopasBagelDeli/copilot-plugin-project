@@ -1,0 +1,63 @@
+{
+  "properties": {
+    "iconBrandColor": "#0078d4",
+    "keyVault": {
+      "resourceGroup": "rg-declarative-agent-plugin",
+      "managedIdentity": {
+        "principalId": "63639a97-42c3-43d2-98d7-639ca3c97386",
+        "clientId": "06b956ba-24cc-4cf2-88ff-3a17ec73de69",
+        "name": "copilot-plugin-identity-f46zzw7hhsh2q"
+      },
+      "name": "kvf46zzw7hdeclarat"
+    },
+    "capabilities": [
+      "actions"
+    ],
+    "metadata": {
+      "version": {
+        "build": 0,
+        "major": 1,
+        "revision": 0,
+        "minor": 0
+      },
+      "source": "marketplace",
+      "brandColor": "#0078d4",
+      "useNewApimVersion": "true"
+    },
+    "connectionParameters": {
+      "token": {
+        "type": "oauthSetting",
+        "oAuthSettings": {
+          "customParameters": {
+            "loginUri": {
+              "value": "https://login.microsoftonline.com"
+            },
+            "resourceUri": {
+              "value": "https://graph.microsoft.com/"
+            },
+            "tenantId": {
+              "value": "@Microsoft.KeyVault(SecretUri=https://kvf46zzw7hdeclarat.vault.azure.net/secrets/azure-tenant-id/)"
+            }
+          },
+          "identityProvider": "aad",
+          "redirectMode": "Global",
+          "clientId": "@Microsoft.KeyVault(SecretUri=https://kvf46zzw7hdeclarat.vault.azure.net/secrets/azure-client-id/)",
+          "redirectUrl": "https://global.consent.azure-apim.net/redirect",
+          "properties": {
+            "IsOnbehalfofLoginSupported": false,
+            "AzureActiveDirectoryResourceId": "https://graph.microsoft.com/",
+            "IsFirstParty": "False"
+          },
+          "scopes": [
+            "https://graph.microsoft.com/.default"
+          ]
+        }
+      }
+    },
+    "policyTemplateInstances": [],
+    "environment": {
+      "name": "Boopas (default)",
+      "id": "de96b383-5f31-4895-9b41-88f3b7435919"
+    }
+  }
+}

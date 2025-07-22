@@ -1,0 +1,149 @@
+{
+  "produces": [
+    "application/json"
+  ],
+  "basePath": "/api/appinsightstelemetryextension",
+  "security": [
+    {
+      "oauth2_auth": [
+        "https://graph.microsoft.com/.default"
+      ]
+    }
+  ],
+  "paths": {
+    "/customoperation": {
+      "post": {
+        "responses": {
+          "401": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Unauthorized"
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Bad request"
+          },
+          "200": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "integer",
+                  "description": "Total number of results"
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "description": "System.Collections.Hashtable",
+                      "title": "System.Collections.Hashtable",
+                      "url": "System.Collections.Hashtable",
+                      "id": "System.Collections.Hashtable"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "description": "Internal server error"
+          }
+        },
+        "description": "Performs CustomOperation operation for AppInsightsTelemetryExtension",
+        "security": [
+          {
+            "oauth2_auth": [
+              "https://graph.microsoft.com/.default"
+            ]
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "request",
+            "schema": {
+              "properties": {
+                "limit": {
+                  "default": 10,
+                  "type": "integer",
+                  "description": "Maximum number of results"
+                },
+                "query": {
+                  "type": "string",
+                  "description": "Search query or operation parameter"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "type": "object"
+            },
+            "in": "body",
+            "required": true
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "operationId": "CustomOperation",
+        "summary": "Execute CustomOperation operation"
+      }
+    }
+  },
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "definitions": {
+    "ErrorResponse": {
+      "properties": {
+        "error": {
+          "type": "string",
+          "description": "Error message"
+        },
+        "details": {
+          "type": "string",
+          "description": "Detailed error information"
+        }
+      },
+      "required": [
+        "error"
+      ],
+      "type": "object"
+    }
+  },
+  "swagger": "2.0",
+  "host": "copilot-plugin-func-f46zzw7hhsh2q.azurewebsites.net",
+  "info": {
+    "contact": {
+      "email": "support@boopasbageldeli.onmicrosoft.com",
+      "name": "AppInsightsTelemetryExtension Support"
+    },
+    "title": "AppInsightsTelemetryExtension API",
+    "version": "1.0.0",
+    "description": "Best practices module for Application Insights telemetry integration and monitoring for M365 Copilot plugins"
+  },
+  "securityDefinitions": {
+    "oauth2_auth": {
+      "tokenUrl": "https://login.microsoftonline.com/de96b383-5f31-4895-9b41-88f3b7435919/oauth2/v2.0/token",
+      "scopes": {
+        "https://graph.microsoft.com/.default": "Access AppInsightsTelemetryExtension data through Microsoft Graph"
+      },
+      "authorizationUrl": "https://login.microsoftonline.com/de96b383-5f31-4895-9b41-88f3b7435919/oauth2/v2.0/authorize",
+      "type": "oauth2",
+      "flow": "accessCode"
+    }
+  }
+}
