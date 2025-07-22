@@ -31,9 +31,10 @@ param tags object = {
   'azd-env-name': environmentName
 }
 
-// Generate unique resource names using resource token
+// Generate unique resource names using resource token (shortened for storage account limits)
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
-var storageAccountName = '${resourcePrefix}st${resourceToken}'
+var shortToken = substring(resourceToken, 0, 8)
+var storageAccountName = 'st${shortToken}${substring(environmentName, 0, min(length(environmentName), 8))}'
 var functionAppName = '${resourcePrefix}-func-${resourceToken}'
 var hostingPlanName = '${resourcePrefix}-plan-${resourceToken}'
 var applicationInsightsName = '${resourcePrefix}-ai-${resourceToken}'
@@ -212,11 +213,11 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
         }
         {
           name: 'APPLICATION_INSIGHTS_CONNECTION_STRING'
-          value: enableApplicationInsights ? applicationInsights.properties.ConnectionString : ''
+          value: enableApplicationInsights ? applicationInsights!.properties.ConnectionString : ''
         }
         {
           name: 'KEY_VAULT_URL'
-          value: enableKeyVault ? keyVault.properties.vaultUri : ''
+          value: enableKeyVault ? keyVault!.properties.vaultUri : ''
         }
         {
           name: 'AZURE_CLIENT_ID'
@@ -291,11 +292,11 @@ output storageAccountName string = storageAccount.name
 
 @description('The Application Insights connection string')
 output applicationInsightsConnectionString string = enableApplicationInsights
-  ? applicationInsights.properties.ConnectionString
+  ? applicationInsights!.properties.ConnectionString
   : ''
 
 @description('The Key Vault URL')
-output keyVaultUrl string = enableKeyVault ? keyVault.properties.vaultUri : ''
+output keyVaultUrl string = enableKeyVault ? keyVault!.properties.vaultUri : ''
 
 @description('The managed identity client ID')
 output managedIdentityClientId string = managedIdentity.properties.clientId
