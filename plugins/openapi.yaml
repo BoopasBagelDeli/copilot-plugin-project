@@ -11,7 +11,7 @@ info:
     url: https://opensource.org/licenses/MIT
 
 servers:
-  - url: https://your-function-app.azurewebsites.net
+  - url: https://copilot-plugin-func-f46zzw7hhsh2q.azurewebsites.net
     description: Production server
   - url: https://localhost:7071
     description: Local development server
