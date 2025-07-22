@@ -51,12 +51,14 @@ copilot-plugin-project/
 ## 🚀 Using This Template
 
 ### Option 1: Use GitHub Template (Recommended)
+
 1. Click **"Use this template"** button on GitHub
 2. Create your new repository from this template
 3. Clone your new repository locally
 4. Run the initialization script to customize for your use case
 
 ### Option 2: Manual Setup
+
 ```bash
 # Clone this template
 git clone https://github.com/BoopasBagelDeli/copilot-plugin-project.git my-new-plugin
@@ -90,15 +92,18 @@ azd up
 After creating from template, customize these key files:
 
 **Core Plugin Configuration:**
+
 - `plugins/plugin_manifest.json` - Plugin identity and capabilities  
 - `plugins/openapi.yaml` - API specification and endpoints
 - `src/main.py` - Business logic and service implementations
 
 **Infrastructure:**
+
 - `infra/main.bicep` - Azure resources and configuration
 - `azure.yaml` - Deployment settings
 
 **Run the initialization script for guided setup:**
+
 ```bash
 python initialize_template.py
 ```

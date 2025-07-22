@@ -19,7 +19,8 @@ function Get-UserInput {
     if ($Default) {
         $input = Read-Host "$Prompt [$Default]"
         return if ($input) { $input } else { $Default }
-    } else {
+    }
+    else {
         return Read-Host $Prompt
     }
 }
@@ -42,7 +43,8 @@ function Update-JsonFile {
                     $current = $current.($keys[$i])
                 }
                 $current.($keys[-1]) = $Updates[$key]
-            } else {
+            }
+            else {
                 $content.$key = $Updates[$key]
             }
         }
@@ -129,22 +131,22 @@ Write-Host "`n🔄 Updating template files..." -ForegroundColor Yellow
 
 # Update plugin manifest
 $manifestUpdates = @{
-    'name_for_human' = $PluginName
+    'name_for_human'        = $PluginName
     'description_for_human' = $Description
     'description_for_model' = "This plugin enables Microsoft 365 Copilot to $($Description.ToLower())"
-    'contact_email' = $ContactEmail
-    'legal_info_url' = "$CompanyUrl/legal"
-    'privacy_policy_url' = "$CompanyUrl/privacy"
-    'logo_url' = "$CompanyUrl/logo.png"
+    'contact_email'         = $ContactEmail
+    'legal_info_url'        = "$CompanyUrl/legal"
+    'privacy_policy_url'    = "$CompanyUrl/privacy"
+    'logo_url'              = "$CompanyUrl/logo.png"
 }
 
 Update-JsonFile 'plugins\plugin_manifest.json' $manifestUpdates
 
 # Update OpenAPI specification
 $openApiReplacements = @{
-    'M365 Copilot Plugin API' = "$PluginName API"
+    'M365 Copilot Plugin API'                                  = "$PluginName API"
     'Declarative plugin for Microsoft 365 Copilot integration' = $Description
-    'support@company.com' = $ContactEmail
+    'support@company.com'                                      = $ContactEmail
 }
 
 Update-TextFile 'plugins\openapi.yaml' $openApiReplacements
@@ -152,7 +154,7 @@ Update-TextFile 'plugins\openapi.yaml' $openApiReplacements
 # Update azure.yaml
 $azureReplacements = @{
     'copilot-plugin-project' = $ProjectPrefix
-    'copilot-plugin@1.0.0' = "$ProjectPrefix@1.0.0"
+    'copilot-plugin@1.0.0'   = "$ProjectPrefix@1.0.0"
 }
 
 Update-TextFile 'azure.yaml' $azureReplacements
@@ -167,9 +169,9 @@ Update-TextFile 'infra\main.bicep' $bicepReplacements
 
 # Update README.md
 $readmeReplacements = @{
-    'Microsoft 365 Copilot Plugin Project' = $PluginName
+    'Microsoft 365 Copilot Plugin Project'                                                                = $PluginName
     'This project demonstrates the complete implementation of a declarative Microsoft 365 Copilot plugin' = $Description
-    'support@company.com' = $ContactEmail
+    'support@company.com'                                                                                 = $ContactEmail
 }
 
 Update-TextFile 'README.md' $readmeReplacements

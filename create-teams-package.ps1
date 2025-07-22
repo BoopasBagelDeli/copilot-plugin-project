@@ -84,7 +84,8 @@ if ($missingIcons.Count -gt 0) {
         $pen.Dispose()
         $font.Dispose()
         $smallFont.Dispose()
-    } else {
+    }
+    else {
         Write-Host "Use -CreateIcons switch to create placeholder icons, or add your own icons." -ForegroundColor Yellow
         Write-Host "Required: teams-app\color.png (192x192) and teams-app\outline.png (32x32)" -ForegroundColor Yellow
         exit 1

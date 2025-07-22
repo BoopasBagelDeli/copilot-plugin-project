@@ -3,6 +3,7 @@
 ## ✅ **COMPLETED ITEMS**
 
 ### 🔐 **Azure AD App Registration**
+
 - **Status**: ✅ **COMPLETE**
 - **App ID**: `ce52f3ea-a567-4540-9c12-3e7941b825bf`
 - **Client Secret**: Stored in Key Vault `kvf46zzw7hdeclarat`
@@ -10,6 +11,7 @@
 - **Redirect URI**: Configured for Function App authentication
 
 ### 🏗️ **Infrastructure**
+
 - **Status**: ✅ **COMPLETE**
 - **Function App**: `https://copilot-plugin-func-f46zzw7hhsh2q.azurewebsites.net`
 - **Key Vault**: Configured with managed identity
@@ -17,6 +19,7 @@
 - **Storage Account**: Supporting infrastructure deployed
 
 ### 📝 **Plugin Manifest**
+
 - **Status**: ✅ **COMPLETE** (Just Updated)
 - **File**: `plugins/plugin_manifest.json`
 - **OpenAPI URL**: Updated to live Function App URL
@@ -24,6 +27,7 @@
 - **Functions**: searchData, analyzeContent, healthCheck defined
 
 ### 🌐 **OpenAPI Specification**
+
 - **Status**: ✅ **COMPLETE**
 - **File**: `plugins/openapi.yaml`
 - **Live URL**: `https://copilot-plugin-func-f46zzw7hhsh2q.azurewebsites.net`
@@ -31,12 +35,14 @@
 - **Endpoints**: /api/search, /api/analyze, /api/health
 
 ### 📦 **Teams App Package**
+
 - **Status**: ✅ **COMPLETE**
 - **Manifest**: `teams-app/manifest.json`
 - **App ID**: Uses same ID as Azure AD app
 - **Package Structure**: Ready for Teams Admin Center upload
 
 ### 🔧 **SDKs & Dependencies**
+
 - **Status**: ✅ **COMPLETE** (Just Updated)
 - **Azure SDKs**: azure-identity, azure-keyvault-secrets, azure-monitor-query
 - **Microsoft Graph**: msgraph-sdk, msgraph-core
@@ -46,6 +52,7 @@
 ## ⚠️ **PENDING MANUAL STEPS**
 
 ### 1. **Azure Portal API Permissions** ⏳
+
 **Status**: **MANUAL ACTION REQUIRED**
 
 You need to complete these steps in Azure Portal:
@@ -56,13 +63,14 @@ You need to complete these steps in Azure Portal:
 4. Add these permissions:
    - **Microsoft Graph**:
      - `User.Read` ✅ (Already added)
-     - `profile` ✅ (Already added) 
+     - `profile` ✅ (Already added)
      - `openid` ⏳ (Add this)
      - `email` ⏳ (Add this)
 5. Click **"Grant admin consent"** for your tenant
 6. Verify all permissions show green checkmarks
 
 ### 2. **Teams Admin Center Registration** ⏳
+
 **Status**: **READY FOR UPLOAD**
 
 1. Go to [Microsoft Teams Admin Center](https://admin.teams.microsoft.com/)
@@ -72,10 +80,12 @@ You need to complete these steps in Azure Portal:
 5. Set permission policies for your organization
 6. Test with Microsoft 365 Copilot
 
-### 3. **M365 Admin Center Configuration** ⏳ 
+### 3. **M365 Admin Center Configuration** ⏳
+
 **Status**: **PENDING TEAMS REGISTRATION**
 
 After Teams registration:
+
 1. Go to [Microsoft 365 Admin Center](https://admin.microsoft.com/)
 2. Navigate to **Settings > Integrated apps**
 3. Find your registered app
@@ -85,12 +95,14 @@ After Teams registration:
 ## 🧪 **TESTING CHECKLIST**
 
 ### ✅ **Infrastructure Tests**
+
 - [x] Function App health endpoint responds
 - [x] Authentication endpoints configured
 - [x] Key Vault integration working
 - [x] Application Insights receiving telemetry
 
 ### ⏳ **Plugin Tests** (After Registration)
+
 - [ ] Plugin appears in M365 Copilot
 - [ ] Search functionality works
 - [ ] Analysis features respond correctly
@@ -100,6 +112,7 @@ After Teams registration:
 ## 🚀 **NEXT IMMEDIATE ACTIONS**
 
 ### Action 1: Complete Azure AD Permissions (5 minutes)
+
 ```bash
 # You can also do this via CLI:
 az ad app permission add --id ce52f3ea-a567-4540-9c12-3e7941b825bf --api 00000003-0000-0000-c000-000000000000 --api-permissions e1fe6dd8-ba31-4d61-89e7-88639da4683d=Scope 64a6cdd6-aab1-4aaf-94b8-3cc8405e90d0=Scope
@@ -109,12 +122,14 @@ az ad app permission admin-consent --id ce52f3ea-a567-4540-9c12-3e7941b825bf
 ```
 
 ### Action 2: Create Teams App Package (2 minutes)
+
 ```powershell
 # Run the package creation script
 .\create-teams-package.ps1
 ```
 
 ### Action 3: Upload to Teams Admin Center (10 minutes)
+
 1. Download the created `.zip` package
 2. Upload via Teams Admin Center
 3. Configure permissions and policies
@@ -140,8 +155,9 @@ az ad app permission admin-consent --id ce52f3ea-a567-4540-9c12-3e7941b825bf
 **What's Done**: Your M365 Copilot Plugin is 80% complete with all technical components ready.
 
 **What's Left**: Just 3 manual administrative steps:
+
 1. Azure Portal permissions (5 min)
-2. Teams Admin Center upload (10 min) 
+2. Teams Admin Center upload (10 min)
 3. M365 Admin Center policies (5 min)
 
 **Total Time to Complete**: ~20 minutes of admin configuration

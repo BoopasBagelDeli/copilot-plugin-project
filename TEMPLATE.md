@@ -15,6 +15,7 @@ This repository serves as a complete template for building Microsoft 365 Copilot
 ### 🚀 Quick Start from Template
 
 #### 1. Use This Template
+
 ```bash
 # Click "Use this template" in GitHub, or clone:
 git clone https://github.com/BoopasBagelDeli/copilot-plugin-project.git my-new-plugin
@@ -22,29 +23,35 @@ cd my-new-plugin
 ```
 
 #### 2. Customize Your Plugin
+
 Edit these key files:
 
 **`plugins/openapi.yaml`**
+
 - Update API endpoints for your specific use case
 - Modify operation IDs and descriptions
 - Add your custom request/response schemas
 
 **`src/main.py`**
+
 - Replace `SearchService` and `AnalysisService` with your business logic
 - Update endpoint implementations
 - Customize authentication if needed
 
 **`plugins/plugin_manifest.json`**
+
 - Change plugin name and description
 - Update contact information
 - Modify conversation starters
 
 **`infra/main.bicep`**
+
 - Adjust resource naming and sizing
 - Add additional Azure resources as needed
 - Update tags and metadata
 
 #### 3. Configure Environment
+
 ```bash
 # Copy local settings template
 cp local.settings.json.template local.settings.json
@@ -56,6 +63,7 @@ cp local.settings.json.template local.settings.json
 ```
 
 #### 4. Deploy to Azure
+
 ```bash
 # Initialize Azure resources
 azd init
@@ -65,6 +73,7 @@ azd up
 ```
 
 #### 5. Register with M365 Copilot
+
 - Follow `azure-ad-setup.md` for Azure AD configuration
 - Register plugin in Microsoft Teams Admin Center
 - Test with Microsoft 365 Copilot
@@ -74,6 +83,7 @@ azd up
 ### Adding New Endpoints
 
 1. **Update OpenAPI Specification** (`plugins/openapi.yaml`):
+
 ```yaml
 paths:
   /api/my-custom-endpoint:
@@ -84,6 +94,7 @@ paths:
 ```
 
 2. **Implement in Python** (`src/main.py`):
+
 ```python
 @app.route(route="my-custom-endpoint", methods=["POST"])
 @SecurityMiddleware.require_bearer_token
@@ -95,6 +106,7 @@ def my_custom_endpoint(req: func.HttpRequest) -> func.HttpResponse:
 ### Adding New Services
 
 Create service classes following the pattern:
+
 ```python
 class MyService:
     @staticmethod
@@ -107,6 +119,7 @@ class MyService:
 ### Adding Azure Resources
 
 Update `infra/main.bicep`:
+
 ```bicep
 resource myNewResource 'Microsoft.SomeService/resource@2023-01-01' = {
   name: 'my-resource-${resourceToken}'
@@ -119,6 +132,7 @@ resource myNewResource 'Microsoft.SomeService/resource@2023-01-01' = {
 ## 📊 Template Features
 
 ### ✅ Included Features
+
 - Complete Azure Functions Python app
 - OpenAPI 3.0.1 specification
 - Azure Bicep infrastructure
@@ -134,6 +148,7 @@ resource myNewResource 'Microsoft.SomeService/resource@2023-01-01' = {
 - Health monitoring
 
 ### 🔄 Customizable Components
+
 - **Business Logic**: Replace example services with your domain logic
 - **API Endpoints**: Add/modify endpoints in OpenAPI spec
 - **Azure Resources**: Extend infrastructure as needed
@@ -152,6 +167,7 @@ resource myNewResource 'Microsoft.SomeService/resource@2023-01-01' = {
 ## 🏷️ Template Versioning
 
 This template follows semantic versioning:
+
 - **Major**: Breaking changes to template structure
 - **Minor**: New features and improvements
 - **Patch**: Bug fixes and documentation updates

@@ -9,6 +9,7 @@ Microsoft 365 Copilot plugins are registered through the Microsoft Teams Admin C
 ### Phase 1: Complete Azure AD Setup (Already Done ✅)
 
 Your Azure AD app registration is complete:
+
 - **App ID**: `ce52f3ea-a567-4540-9c12-3e7941b825bf`
 - **Status**: ✅ Created and configured
 - **Next**: Complete Azure Portal permissions setup
@@ -18,6 +19,7 @@ Your Azure AD app registration is complete:
 Create the plugin package for M365 Copilot registration:
 
 #### 1. Plugin Manifest (Already Created ✅)
+
 - **File**: `plugins/plugin_manifest.json`
 - **Status**: ✅ Ready for registration
 - **Contains**: Plugin identity, capabilities, OpenAPI spec reference
@@ -64,17 +66,18 @@ Create a Teams app package that references your plugin:
 
 ### Phase 3: Register in Microsoft Teams Admin Center
 
-#### Prerequisites:
+#### Prerequisites
+
 - ✅ Azure AD app registration complete
 - ✅ Function App deployed and running
 - ✅ Plugin manifest ready
 - ⏳ API permissions granted in Azure Portal
 - ⏳ Teams app package created
 
-#### Registration Process:
+#### Registration Process
 
 1. **Access Teams Admin Center**
-   - Go to: https://admin.teams.microsoft.com
+   - Go to: <https://admin.teams.microsoft.com>
    - Sign in with Global Admin or Teams Administrator credentials
 
 2. **Navigate to Apps Management**
@@ -95,7 +98,7 @@ Create a Teams app package that references your plugin:
 ### Phase 4: Enable in Microsoft 365 Admin Center
 
 1. **Access M365 Admin Center**
-   - Go to: https://admin.microsoft.com
+   - Go to: <https://admin.microsoft.com>
    - Navigate to Settings → Integrated apps
 
 2. **Manage Copilot Plugins**
@@ -117,13 +120,14 @@ Once registered, users can:
 
 ## 🔧 Current Status & Next Steps
 
-### ✅ Completed:
+### ✅ Completed
+
 - Azure AD app registration
 - Azure Function App deployment
 - Plugin manifest creation
 - Infrastructure setup
 
-### ⏳ Remaining Tasks:
+### ⏳ Remaining Tasks
 
 1. **Complete Azure Portal Setup** (5 minutes)
    - Grant API permissions
@@ -145,15 +149,17 @@ Once registered, users can:
 
 ## 📞 Support & Resources
 
-### Microsoft Documentation:
+### Microsoft Documentation
+
 - [Declarative agents for Microsoft 365 Copilot](https://docs.microsoft.com/microsoft-365-copilot/extensibility/overview-declarative-agent)
 - [Teams app manifest schema](https://docs.microsoft.com/microsoftteams/platform/resources/schema/manifest-schema)
 - [Teams Admin Center](https://docs.microsoft.com/microsoftteams/manage-apps)
 
-### Admin Portals:
-- **Teams Admin Center**: https://admin.teams.microsoft.com
-- **M365 Admin Center**: https://admin.microsoft.com
-- **Azure Portal**: https://portal.azure.com
+### Admin Portals
+
+- **Teams Admin Center**: <https://admin.teams.microsoft.com>
+- **M365 Admin Center**: <https://admin.microsoft.com>
+- **Azure Portal**: <https://portal.azure.com>
 
 ## ⚠️ Important Notes
 
