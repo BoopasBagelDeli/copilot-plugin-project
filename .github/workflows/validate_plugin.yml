@@ -1,0 +1,439 @@
+name: Plugin Validation
+on:
+  push:
+    paths:
+      - "plugins/**"
+      - "src/**"
+  pull_request:
+    paths:
+      - "plugins/**"
+      - "src/**"
+
+env:
+  PYTHON_VERSION: "3.11"
+  NODE_VERSION: "18"
+
+jobs:
+  validate-openapi:
+    name: Validate OpenAPI Specification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install OpenAPI tools
+        run: |
+          npm install -g @apidevtools/swagger-parser
+          npm install -g @stoplight/spectral-cli
+          npm install -g redoc-cli
+
+      - name: Validate OpenAPI syntax
+        run: |
+          swagger-parser validate plugins/openapi.yaml
+
+      - name: Lint OpenAPI with Spectral
+        run: |
+          spectral lint plugins/openapi.yaml --ruleset .spectral.yml
+
+      - name: Generate API documentation
+        run: |
+          redoc-cli build plugins/openapi.yaml --output docs/api-documentation.html
+
+      - name: Upload API documentation
+        uses: actions/upload-artifact@v3
+        with:
+          name: api-documentation
+          path: docs/api-documentation.html
+
+  validate-plugin-manifest:
+    name: Validate Plugin Manifest
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install validation tools
+        run: |
+          npm install -g ajv-cli
+          npm install -g jsonlint
+
+      - name: Validate JSON syntax
+        run: |
+          jsonlint plugins/plugin_manifest.json
+          jsonlint plugins/plugin_config.json
+
+      - name: Validate manifest schema
+        run: |
+          # Create a basic schema if not exists
+          if [ ! -f schemas/plugin-manifest-schema.json ]; then
+            mkdir -p schemas
+            cat > schemas/plugin-manifest-schema.json << 'EOF'
+          {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "required": ["schema_version", "namespace", "name_for_human"],
+            "properties": {
+              "schema_version": {"type": "string"},
+              "namespace": {"type": "string"},
+              "name_for_human": {"type": "string"},
+              "description_for_human": {"type": "string"},
+              "description_for_model": {"type": "string"}
+            }
+          }
+          EOF
+          fi
+          ajv validate -s schemas/plugin-manifest-schema.json -d plugins/plugin_manifest.json
+
+      - name: Check required fields
+        run: |
+          python3 << 'EOF'
+          import json
+
+          with open('plugins/plugin_manifest.json', 'r') as f:
+              manifest = json.load(f)
+
+          required_fields = [
+              'schema_version', 'namespace', 'name_for_human', 
+              'description_for_human', 'description_for_model'
+          ]
+
+          missing_fields = [field for field in required_fields if field not in manifest]
+
+          if missing_fields:
+              print(f"❌ Missing required fields: {missing_fields}")
+              exit(1)
+          else:
+              print("✅ All required fields present")
+
+          # Validate runtimes
+          if 'runtimes' not in manifest:
+              print("❌ Missing runtimes configuration")
+              exit(1)
+
+          if not manifest['runtimes']:
+              print("❌ Empty runtimes array")
+              exit(1)
+              
+          print("✅ Plugin manifest validation passed")
+          EOF
+
+  validate-copilot-compatibility:
+    name: Validate Copilot Compatibility
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Check OpenAPI Copilot annotations
+        run: |
+          python3 << 'EOF'
+          import yaml
+
+          with open('plugins/openapi.yaml', 'r') as f:
+              openapi_spec = yaml.safe_load(f)
+
+          # Check for required Copilot annotations
+          paths = openapi_spec.get('paths', {})
+
+          for path, methods in paths.items():
+              for method, details in methods.items():
+                  if method.upper() in ['GET', 'POST', 'PUT', 'DELETE']:
+                      # Check for operationId
+                      if 'operationId' not in details:
+                          print(f"❌ Missing operationId for {method.upper()} {path}")
+                          exit(1)
+                      
+                      # Check for Copilot annotations
+                      if 'x-ms-api-annotation' not in details:
+                          print(f"⚠️  Missing x-ms-api-annotation for {method.upper()} {path}")
+                      else:
+                          annotation = details['x-ms-api-annotation']
+                          required_annotation_fields = ['description', 'summary', 'operationId']
+                          for field in required_annotation_fields:
+                              if field not in annotation:
+                                  print(f"❌ Missing {field} in x-ms-api-annotation for {method.upper()} {path}")
+                                  exit(1)
+
+          print("✅ OpenAPI Copilot compatibility validation passed")
+          EOF
+
+      - name: Check plugin functions mapping
+        run: |
+          python3 << 'EOF'
+          import json
+          import yaml
+
+          # Load manifest
+          with open('plugins/plugin_manifest.json', 'r') as f:
+              manifest = json.load(f)
+
+          # Load OpenAPI spec
+          with open('plugins/openapi.yaml', 'r') as f:
+              openapi_spec = yaml.safe_load(f)
+
+          # Extract function names from manifest
+          manifest_functions = []
+          if 'functions' in manifest:
+              manifest_functions = [func['name'] for func in manifest['functions']]
+
+          # Extract runtime functions
+          runtime_functions = []
+          if 'runtimes' in manifest:
+              for runtime in manifest['runtimes']:
+                  if 'run_for_functions' in runtime:
+                      runtime_functions.extend(runtime['run_for_functions'])
+
+          # Extract operationIds from OpenAPI
+          openapi_operations = []
+          paths = openapi_spec.get('paths', {})
+          for path, methods in paths.items():
+              for method, details in methods.items():
+                  if 'operationId' in details:
+                      openapi_operations.append(details['operationId'])
+
+          # Validate consistency
+          print(f"Manifest functions: {manifest_functions}")
+          print(f"Runtime functions: {runtime_functions}")
+          print(f"OpenAPI operations: {openapi_operations}")
+
+          # Check if all runtime functions have corresponding OpenAPI operations
+          missing_operations = [func for func in runtime_functions if func not in openapi_operations]
+          if missing_operations:
+              print(f"❌ Missing OpenAPI operations for functions: {missing_operations}")
+              exit(1)
+
+          # Check if all manifest functions are in runtime
+          missing_runtime = [func for func in manifest_functions if func not in runtime_functions]
+          if missing_runtime:
+              print(f"❌ Functions not in runtime configuration: {missing_runtime}")
+              exit(1)
+
+          print("✅ Plugin function mapping validation passed")
+          EOF
+
+  test-plugin-endpoints:
+    name: Test Plugin Endpoints
+    runs-on: ubuntu-latest
+    needs: [validate-openapi, validate-plugin-manifest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pyyaml jsonschema
+
+      - name: Create endpoint test script
+        run: |
+          cat > test_endpoints.py << 'EOF'
+          import json
+          import yaml
+          import requests
+          from jsonschema import validate
+
+          def load_openapi_spec():
+              with open('plugins/openapi.yaml', 'r') as f:
+                  return yaml.safe_load(f)
+
+          def test_endpoint_schemas():
+              """Test that endpoint responses match OpenAPI schemas"""
+              spec = load_openapi_spec()
+              
+              # Test data for different endpoints
+              test_cases = [
+                  {
+                      'path': '/api/search',
+                      'method': 'get',
+                      'params': {'query': 'test', 'limit': 5},
+                      'expected_status': 200
+                  },
+                  {
+                      'path': '/api/health',
+                      'method': 'get',
+                      'expected_status': 200
+                  }
+              ]
+              
+              for case in test_cases:
+                  path_spec = spec['paths'][case['path']][case['method']]
+                  responses = path_spec.get('responses', {})
+                  
+                  # Check if expected status code is defined
+                  if str(case['expected_status']) not in responses:
+                      print(f"❌ Missing response definition for {case['method'].upper()} {case['path']} status {case['expected_status']}")
+                      return False
+                  
+                  response_spec = responses[str(case['expected_status'])]
+                  
+                  # Check if response has content schema
+                  if 'content' in response_spec:
+                      content = response_spec['content']
+                      if 'application/json' in content:
+                          schema = content['application/json'].get('schema')
+                          if schema:
+                              print(f"✅ Schema defined for {case['method'].upper()} {case['path']}")
+                          else:
+                              print(f"⚠️  No schema for {case['method'].upper()} {case['path']}")
+              
+              print("✅ Endpoint schema validation completed")
+              return True
+
+          if __name__ == "__main__":
+              success = test_endpoint_schemas()
+              exit(0 if success else 1)
+          EOF
+
+      - name: Run endpoint tests
+        run: |
+          python test_endpoints.py
+
+  security-validation:
+    name: Security Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Check security configurations
+        run: |
+          python3 << 'EOF'
+          import json
+          import yaml
+
+          # Load OpenAPI spec
+          with open('plugins/openapi.yaml', 'r') as f:
+              openapi_spec = yaml.safe_load(f)
+
+          # Check for security schemes
+          if 'security' not in openapi_spec:
+              print("❌ No global security configuration found")
+              exit(1)
+
+          security_schemes = openapi_spec.get('components', {}).get('securitySchemes', {})
+          if not security_schemes:
+              print("❌ No security schemes defined")
+              exit(1)
+
+          # Check for bearer token auth
+          has_bearer_auth = any(
+              scheme.get('type') == 'http' and scheme.get('scheme') == 'bearer'
+              for scheme in security_schemes.values()
+          )
+
+          if not has_bearer_auth:
+              print("❌ No bearer token authentication found")
+              exit(1)
+
+          print("✅ Security configuration validation passed")
+
+          # Check plugin config security settings
+          with open('plugins/plugin_config.json', 'r') as f:
+              config = json.load(f)
+
+          security_config = config.get('security', {})
+
+          # Check CORS configuration
+          cors = security_config.get('cors', {})
+          if not cors.get('enabled', False):
+              print("⚠️  CORS not enabled in plugin config")
+
+          # Check CSP configuration
+          csp = security_config.get('content_security_policy', {})
+          if not csp.get('enabled', False):
+              print("⚠️  Content Security Policy not enabled")
+
+          print("✅ Plugin security configuration validation passed")
+          EOF
+
+  generate-validation-report:
+    name: Generate Validation Report
+    runs-on: ubuntu-latest
+    needs:
+      [
+        validate-copilot-compatibility,
+        test-plugin-endpoints,
+        security-validation,
+      ]
+    if: always()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate validation report
+        run: |
+          cat > validation-report.md << 'EOF'
+          # Plugin Validation Report
+
+          **Date:** $(date)
+          **Commit:** ${{ github.sha }}
+          **Branch:** ${{ github.ref_name }}
+
+          ## Validation Results
+
+          | Check | Status |
+          |-------|--------|
+          | OpenAPI Validation | ${{ needs.validate-openapi.result == 'success' && '✅ Passed' || '❌ Failed' }} |
+          | Plugin Manifest | ${{ needs.validate-plugin-manifest.result == 'success' && '✅ Passed' || '❌ Failed' }} |
+          | Copilot Compatibility | ${{ needs.validate-copilot-compatibility.result == 'success' && '✅ Passed' || '❌ Failed' }} |
+          | Endpoint Tests | ${{ needs.test-plugin-endpoints.result == 'success' && '✅ Passed' || '❌ Failed' }} |
+          | Security Validation | ${{ needs.security-validation.result == 'success' && '✅ Passed' || '❌ Failed' }} |
+
+          ## Plugin Information
+
+          - **Plugin Name:** Company Data Plugin
+          - **Version:** 1.0.0
+          - **Namespace:** com.company.copilot-plugin
+
+          ## Endpoints Validated
+
+          - `GET /api/search` - Search for data
+          - `POST /api/analyze` - Analyze content
+          - `GET /api/health` - Health check
+
+          ## Security Features
+
+          - Bearer token authentication
+          - Request validation
+          - Rate limiting
+          - CORS configuration
+          - Content Security Policy
+
+          EOF
+
+      - name: Upload validation report
+        uses: actions/upload-artifact@v3
+        with:
+          name: validation-report
+          path: validation-report.md

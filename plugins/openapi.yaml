@@ -1,0 +1,338 @@
+openapi: 3.0.1
+info:
+  title: M365 Copilot Plugin API
+  description: Declarative plugin for Microsoft 365 Copilot integration
+  version: 1.0.0
+  contact:
+    name: Plugin Support
+    email: support@company.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://your-function-app.azurewebsites.net
+    description: Production server
+  - url: https://localhost:7071
+    description: Local development server
+
+security:
+  - BearerAuth: []
+
+paths:
+  /api/search:
+    get:
+      operationId: searchData
+      summary: Search for relevant data
+      description: Searches for data based on user query to provide relevant results
+      x-ms-api-annotation:
+        description: "Search for information based on user queries"
+        summary: "Search data"
+        operationId: "searchData"
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: The search query string
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 500
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of results to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: category
+          in: query
+          required: false
+          description: Category filter for search results
+          schema:
+            type: string
+            enum: [documents, contacts, events, tasks]
+      responses:
+        '200':
+          description: Successful search response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: Bad request - invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests - rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/analyze:
+    post:
+      operationId: analyzeContent
+      summary: Analyze content for insights
+      description: Analyzes provided content to extract insights and recommendations
+      x-ms-api-annotation:
+        description: "Analyze content to provide insights and recommendations"
+        summary: "Analyze content"
+        operationId: "analyzeContent"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalyzeRequest'
+      responses:
+        '200':
+          description: Successful analysis response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyzeResponse'
+        '400':
+          description: Bad request - invalid content or parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '413':
+          description: Payload too large - content exceeds size limits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests - rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/health:
+    get:
+      operationId: healthCheck
+      summary: Health check endpoint
+      description: Returns the health status of the plugin service
+      x-ms-api-annotation:
+        description: "Check the health status of the plugin service"
+        summary: "Health check"
+        operationId: "healthCheck"
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for authentication
+
+  schemas:
+    SearchResponse:
+      type: object
+      required:
+        - results
+        - total
+        - query
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchResult'
+        total:
+          type: integer
+          description: Total number of available results
+          minimum: 0
+        query:
+          type: string
+          description: The original search query
+        facets:
+          type: object
+          description: Faceted search results for filtering
+          additionalProperties:
+            type: array
+            items:
+              type: string
+
+    SearchResult:
+      type: object
+      required:
+        - id
+        - title
+        - relevance
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the result
+        title:
+          type: string
+          description: Title of the search result
+        summary:
+          type: string
+          description: Brief summary of the content
+        url:
+          type: string
+          format: uri
+          description: URL to access the full content
+        category:
+          type: string
+          description: Category of the result
+        relevance:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Relevance score (0-1)
+        metadata:
+          type: object
+          description: Additional metadata about the result
+          additionalProperties: true
+
+    AnalyzeRequest:
+      type: object
+      required:
+        - content
+        - analysisType
+      properties:
+        content:
+          type: string
+          description: Content to analyze
+          minLength: 1
+          maxLength: 10000
+        analysisType:
+          type: string
+          enum: [sentiment, keywords, summary, insights]
+          description: Type of analysis to perform
+        options:
+          type: object
+          description: Additional analysis options
+          properties:
+            language:
+              type: string
+              description: Language code for content processing
+              pattern: '^[a-z]{2}(-[A-Z]{2})?$'
+            includeConfidence:
+              type: boolean
+              description: Include confidence scores in results
+              default: false
+
+    AnalyzeResponse:
+      type: object
+      required:
+        - analysisType
+        - result
+      properties:
+        analysisType:
+          type: string
+          description: Type of analysis performed
+        result:
+          type: object
+          description: Analysis results
+          additionalProperties: true
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Confidence score for the analysis
+        processing_time:
+          type: number
+          format: float
+          description: Processing time in seconds
+
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - timestamp
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+          description: Overall health status
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the health check
+        version:
+          type: string
+          description: Service version
+        dependencies:
+          type: object
+          description: Status of dependent services
+          additionalProperties:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: [up, down, unknown]
+              response_time:
+                type: number
+                format: float
+                description: Response time in milliseconds
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error code or type
+        message:
+          type: string
+          description: Human-readable error message
+        details:
+          type: string
+          description: Additional error details
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp when the error occurred
+        request_id:
+          type: string
+          description: Unique identifier for the request

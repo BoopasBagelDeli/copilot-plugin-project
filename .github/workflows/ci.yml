@@ -1,0 +1,277 @@
+name: CI Pipeline
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  PYTHON_VERSION: "3.11"
+  NODE_VERSION: "18"
+
+jobs:
+  lint-and-validate:
+    name: Lint and Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 black isort mypy pytest
+          pip install azure-functions azure-identity azure-monitor-opentelemetry
+          pip install applicationinsights azure-keyvault-secrets
+
+      - name: Install Node.js dependencies
+        run: |
+          npm install -g @apidevtools/swagger-parser
+          npm install -g yaml-lint
+
+      - name: Lint Python code
+        run: |
+          flake8 src/ --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 src/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Check Python formatting
+        run: |
+          black --check src/
+          isort --check-only src/
+
+      - name: Type checking
+        run: |
+          mypy src/ --ignore-missing-imports
+
+      - name: Validate OpenAPI spec
+        run: |
+          swagger-parser validate plugins/openapi.yaml
+
+      - name: Validate YAML files
+        run: |
+          find . -name "*.yml" -o -name "*.yaml" | xargs yaml-lint
+
+      - name: Validate JSON files
+        run: |
+          find . -name "*.json" | xargs -I {} sh -c 'echo "Validating {}" && cat {} | python -m json.tool > /dev/null'
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install security tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install bandit safety
+
+      - name: Run Bandit security linter
+        run: |
+          bandit -r src/ -f json -o bandit-report.json
+
+      - name: Check for known security vulnerabilities
+        run: |
+          safety check --json --output safety-report.json
+
+      - name: Upload security reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: security-reports
+          path: |
+            bandit-report.json
+            safety-report.json
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov pytest-mock
+          pip install azure-functions azure-identity azure-monitor-opentelemetry
+          pip install applicationinsights azure-keyvault-secrets
+
+      - name: Run unit tests
+        run: |
+          pytest tests/ --cov=src/ --cov-report=xml --cov-report=html
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-reports
+          path: |
+            coverage.xml
+            htmlcov/
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [lint-and-validate, unit-tests]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Azure Functions Core Tools
+        run: |
+          curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+          sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
+          sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-$(lsb_release -cs)-prod $(lsb_release -cs) main" > /etc/apt/sources.list.d/dotnetdev.list'
+          sudo apt-get update
+          sudo apt-get install azure-functions-core-tools-4
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Start Azure Functions locally
+        run: |
+          func start --port 7071 &
+          sleep 30
+
+      - name: Run integration tests
+        run: |
+          pytest tests/integration/ -v
+
+      - name: Stop Azure Functions
+        run: |
+          pkill -f "func start" || true
+
+  plugin-validation:
+    name: Plugin Validation
+    runs-on: ubuntu-latest
+    needs: [lint-and-validate]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install validation tools
+        run: |
+          npm install -g @microsoft/teams-toolkit-cli
+          npm install -g ajv-cli
+
+      - name: Validate plugin manifest
+        run: |
+          # Validate JSON schema
+          ajv validate -s schemas/plugin-manifest-schema.json -d plugins/plugin_manifest.json
+
+      - name: Validate plugin configuration
+        run: |
+          # Validate configuration schema
+          ajv validate -s schemas/plugin-config-schema.json -d plugins/plugin_config.json
+
+      - name: Test plugin endpoints simulation
+        run: |
+          # Simulate plugin endpoint calls
+          node scripts/validate-plugin-endpoints.js
+
+  build-artifacts:
+    name: Build Artifacts
+    runs-on: ubuntu-latest
+    needs: [security-scan, unit-tests, plugin-validation]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Create deployment package
+        run: |
+          mkdir -p dist
+          cp -r src/ dist/
+          cp -r plugins/ dist/
+          cp requirements.txt dist/
+          cp host.json dist/
+          cp local.settings.json.template dist/local.settings.json
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: function-app-package
+          path: dist/
+
+      - name: Upload plugin files
+        uses: actions/upload-artifact@v3
+        with:
+          name: plugin-package
+          path: |
+            plugins/
+            docs/
+
+  notify-teams:
+    name: Notify Teams
+    runs-on: ubuntu-latest
+    needs: [build-artifacts, integration-tests]
+    if: always()
+
+    steps:
+      - name: Notify Teams on success
+        if: ${{ needs.build-artifacts.result == 'success' && needs.integration-tests.result == 'success' }}
+        uses: aliencube/microsoft-teams-actions@v0.8.0
+        with:
+          webhook_uri: ${{ secrets.TEAMS_WEBHOOK_URI }}
+          title: "✅ CI Pipeline Successful"
+          summary: "All CI checks passed for Copilot Plugin"
+          text: "The CI pipeline has completed successfully. Ready for deployment."
+          theme_color: "00FF00"
+
+      - name: Notify Teams on failure
+        if: ${{ needs.build-artifacts.result == 'failure' || needs.integration-tests.result == 'failure' }}
+        uses: aliencube/microsoft-teams-actions@v0.8.0
+        with:
+          webhook_uri: ${{ secrets.TEAMS_WEBHOOK_URI }}
+          title: "❌ CI Pipeline Failed"
+          summary: "CI pipeline failed for Copilot Plugin"
+          text: "Please check the build logs and fix any issues."
+          theme_color: "FF0000"

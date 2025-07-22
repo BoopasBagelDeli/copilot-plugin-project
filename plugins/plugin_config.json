@@ -1,0 +1,89 @@
+{
+  "environment": "development",
+  "plugin_id": "com.company.copilot-plugin",
+  "api_base_url": "https://localhost:7071",
+  "authentication": {
+    "type": "MicrosoftEntra",
+    "tenant_id": "${AZURE_TENANT_ID}",
+    "client_id": "${AZURE_CLIENT_ID}",
+    "scopes": [
+      "api://your-app-id/access_as_user"
+    ]
+  },
+  "features": {
+    "search": {
+      "enabled": true,
+      "default_limit": 10,
+      "max_limit": 100,
+      "supported_categories": [
+        "documents",
+        "contacts", 
+        "events",
+        "tasks"
+      ]
+    },
+    "analysis": {
+      "enabled": true,
+      "max_content_length": 10000,
+      "supported_types": [
+        "sentiment",
+        "keywords",
+        "summary",
+        "insights"
+      ],
+      "default_language": "en-US"
+    },
+    "caching": {
+      "enabled": true,
+      "ttl_seconds": 300,
+      "max_cache_size": "100MB"
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "application_insights": {
+      "enabled": true,
+      "connection_string": "${APPLICATION_INSIGHTS_CONNECTION_STRING}"
+    },
+    "correlation": {
+      "enabled": true,
+      "include_request_id": true
+    }
+  },
+  "rate_limiting": {
+    "enabled": true,
+    "requests_per_minute": 100,
+    "burst_limit": 20,
+    "retry_after_seconds": 60
+  },
+  "security": {
+    "cors": {
+      "enabled": true,
+      "allowed_origins": [
+        "https://copilot.microsoft.com",
+        "https://teams.microsoft.com",
+        "https://outlook.office.com"
+      ]
+    },
+    "content_security_policy": {
+      "enabled": true,
+      "policy": "default-src 'self'; script-src 'self' 'unsafe-inline'"
+    }
+  },
+  "monitoring": {
+    "health_check": {
+      "enabled": true,
+      "interval_seconds": 30,
+      "timeout_seconds": 5
+    },
+    "metrics": {
+      "enabled": true,
+      "custom_metrics": [
+        "search_requests",
+        "analysis_requests",
+        "response_time",
+        "error_rate"
+      ]
+    }
+  }
+}

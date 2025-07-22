@@ -1,0 +1,94 @@
+{
+  "$schema": "https://schema.microsoft.com/json-schemas/manifest/copilot-plugin/1.0/schema.json",
+  "schema_version": "v1.0",
+  "namespace": "com.company.copilot-plugin",
+  "name_for_human": "Company Data Plugin",
+  "description_for_human": "A declarative plugin that helps users search and analyze company data through Microsoft 365 Copilot",
+  "description_for_model": "This plugin enables Microsoft 365 Copilot to search through company data sources and provide analytical insights. It supports searching documents, contacts, events, and tasks, as well as content analysis for sentiment, keywords, summaries, and insights.",
+  "contact_email": "support@company.com",
+  "legal_info_url": "https://company.com/legal",
+  "privacy_policy_url": "https://company.com/privacy",
+  "logo_url": "https://company.com/logo.png",
+  "runtimes": [
+    {
+      "type": "OpenApi",
+      "auth": {
+        "type": "MicrosoftEntra",
+        "reference_id": "oauth2"
+      },
+      "spec": {
+        "url": "https://your-function-app.azurewebsites.net/api/openapi"
+      },
+      "run_for_functions": [
+        "searchData",
+        "analyzeContent",
+        "healthCheck"
+      ]
+    }
+  ],
+  "capabilities": {
+    "localization": {
+      "default_locale": "en-US",
+      "supported_locales": [
+        "en-US",
+        "es-ES",
+        "fr-FR",
+        "de-DE",
+        "ja-JP"
+      ]
+    },
+    "conversation_starters": [
+      {
+        "text": "Search for recent documents about the quarterly review"
+      },
+      {
+        "text": "Find contacts in the sales department"
+      },
+      {
+        "text": "Analyze the sentiment of this customer feedback"
+      },
+      {
+        "text": "Summarize the key insights from this report"
+      }
+    ]
+  },
+  "functions": [
+    {
+      "name": "searchData",
+      "description": "Search through company data sources including documents, contacts, events, and tasks based on user queries"
+    },
+    {
+      "name": "analyzeContent",
+      "description": "Analyze provided content to extract insights, sentiment, keywords, or generate summaries"
+    },
+    {
+      "name": "healthCheck",
+      "description": "Check the health and availability of the plugin service"
+    }
+  ],
+  "x-copilot-plugin": {
+    "declarative": true,
+    "version": "1.0.0",
+    "supported_copilot_experiences": [
+      "Microsoft365Chat",
+      "TeamsChat",
+      "OutlookChat"
+    ],
+    "telemetry": {
+      "enabled": true,
+      "application_insights_key": "${APPLICATION_INSIGHTS_KEY}"
+    },
+    "governance": {
+      "data_classification": "Internal",
+      "retention_policy": "7years",
+      "audit_logging": true
+    },
+    "performance": {
+      "max_execution_time": 30,
+      "rate_limit": {
+        "requests_per_minute": 100,
+        "burst_limit": 20
+      }
+    }
+  }
+}
