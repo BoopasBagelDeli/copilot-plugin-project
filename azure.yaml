@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: copilot-m365-plugins
+metadata:
+  template: azd-init@1.18.0
+  description: Microsoft 365 Copilot Ecosystem Plugin Framework
+
+services:
+  entraidconnector:
+    project: ./copilot-plugin-project/EntraIDConnector-module
+    host: function
+    language: python
+    
+  azuremonitorconnector:
+    project: ./copilot-plugin-project/AzureMonitorConnector-module
+    host: function
+    language: python
+    
+  azuredevopsconnector:
+    project: ./copilot-plugin-project/AzureDevOpsConnector-module
+    host: function
+    language: python
+    
+  githubconnector:
+    project: ./copilot-plugin-project/GitHubConnector-module
+    host: function
+    language: python
+    
+  githubactionsconnector:
+    project: ./copilot-plugin-project/GitHubActionsConnector-module
+    host: function
+    language: python
+    
+  azurereposconnector:
+    project: ./copilot-plugin-project/AzureReposConnector-module
+    host: function
+    language: python
+
+infra:
+  provider: bicep

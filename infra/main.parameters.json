@@ -1,0 +1,31 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": {
+      "value": "${AZURE_ENV_NAME}"
+    },
+    "location": {
+      "value": "${AZURE_LOCATION}"
+    },
+    "appInsightsLocation": {
+      "value": "${AZURE_LOCATION}"
+    },
+    "logAnalyticsLocation": {
+      "value": "${AZURE_LOCATION}"
+    },
+    "storageAccountType": {
+      "value": "Standard_LRS"
+    },
+    "functionAppRuntime": {
+      "value": "python"
+    },
+    "tags": {
+      "value": {
+        "environment": "${AZURE_ENV_NAME}",
+        "project": "copilot-m365-plugins",
+        "purpose": "Microsoft ecosystem integration"
+      }
+    }
+  }
+}
