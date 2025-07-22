@@ -177,7 +177,9 @@ resource hostingPlan 'Microsoft.Web/serverfarms@2023-01-01' = {
 resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
   name: functionAppName
   location: location
-  tags: tags
+  tags: union(tags, {
+    'azd-service-name': 'api'
+  })
   kind: 'functionapp,linux'
   identity: {
     type: 'UserAssigned'
